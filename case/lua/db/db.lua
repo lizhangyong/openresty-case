@@ -9,7 +9,7 @@ function  _M.conn_db()
 end
 
 function  _M.do_cmd(cmd)
-	return db.do_cmd(key)
+    return db.do_cmd(key)
 end
 
 return _M
