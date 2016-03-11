@@ -3,7 +3,7 @@ local config = require "lua.comm.config"
 local cache_op   = require "lua.first_cache.first_cache"
 local db_op = require "lua.db.db"
 
-local cli_ip = ngx.var.server_addr
+local cli_ip = ngx.var.remote_addr
 local mid = ngx.req.get_uri_args().mid
 
 --从缓存中查找mid对应的ip
