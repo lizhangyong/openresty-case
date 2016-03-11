@@ -35,11 +35,12 @@ function _M.set_keepalive_mod(conn)
 end
 
 function _M.do_cmd(self, cmd)
+    ngx.log(ngx.INFO, "cmd: ", cmd)
+
     local db, err = self:conn_db()
     if not db or err then
         return nil, err
     end
-
     local res, err = db:query(cmd)
     if not res or err then
         ngx.log(ngx.ERR, "mysql:query failed, err: ", err, " cmd: ", cmd)
