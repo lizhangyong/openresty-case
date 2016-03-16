@@ -9,9 +9,10 @@ local mid = ngx.var.arg_mid
 
 --从缓存中查找mid对应的ip
 local res, err = cache_op:get_cache(mid)
-if not res or err then
-    ngx.log(ngx.ERR, "cache not hit for mid: ", mid, ' err:', err)
-else
+if err then
+    ngx.log(ngx.WARN, "cache not hit for mid: ", mid, ' err:', err)
+end
+if nil ~= res then
    --命中缓存
    return ngx.say("result is: ", res)
 end
@@ -23,7 +24,6 @@ if config.MYSQL_TABLE then
 end
                  
 local quote_mid = ngx.quote_sql_str(mid) 
---local cmd = [[select ip from ]] .. tb_name .. [[ where mid=]] .. quote_mid .. [[ limit 1;]] 
 local cmd = string.format("select ip from %s where mid = %s limit 1", tb_name, quote_mid)  
 local res, err = db_op:do_cmd(cmd)
 if not res or err then
