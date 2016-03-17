@@ -8,10 +8,11 @@ run_tests();
 
 __DATA__
 
-=== TEST 1: 初始化redis 
+=== TEST 1: mid存在于redis中 
 --- config
-    location /openresty-case/init.json {
-        content_by_lua '
+    location /openresty-case/some.json {
+        #初始化redis
+        access_by_lua '
             local redis = require "resty.redis"
             local red = redis:new()
 
@@ -23,38 +24,19 @@ __DATA__
 
             red:set_timeout(100) -- 0.1 sec
 
-            local data, err = red:set("test10", "10.16.93.178")
+            local data, err = red:set("test1", "10.16.93.178")
             if not data then
                 ngx.say("failed to set: ", err)
             end
             ngx.sleep(0.1)
             red:close()
         ';
+        proxy_pass http://127.0.0.1:8080;
     }
 
 --- request
-GET /openresty-case/init.json
---- error_code: 200
-
-=== TEST 2: 测试mid已经在redis中的情况 
---- config
-    location /openresty-case/some.json {
-        access_by_lua_file  ../../lua/access_check.lua;
-        content_by_lua_file ../../lua/resty_case.lua;
-    }
-
---- request
-GET /openresty-case/some.json/?mid=test10
+GET /openresty-case/some.json/?mid=test1
 
 --- error_code: 200
---- tcp_listen: 6379 
---- tcp_query eval
-"*2\r
-\$3\r
-get\r
-\$3\r
-test10\r
-"
---- tcp_reply eval
-"\$5\r\n10.16.93.178\r\n"
-
+--- respone_body_like
+\s*10.16.93.178
