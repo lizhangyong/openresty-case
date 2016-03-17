@@ -8,7 +8,7 @@ run_tests();
 
 __DATA__
 
-=== TEST 1: mid存在于redis中 
+=== TEST 1: mid存在于redis中
 --- config
     location /openresty-case/some.json {
         #初始化redis
@@ -24,7 +24,7 @@ __DATA__
 
             red:set_timeout(100) -- 0.1 sec
 
-            local data, err = red:set("test1", "10.16.93.178")
+            local data, err = red:set("test1", "10.16.93.17")
             if not data then
                 ngx.say("failed to set: ", err)
             end
@@ -38,5 +38,5 @@ __DATA__
 GET /openresty-case/some.json/?mid=test1
 
 --- error_code: 200
---- respone_body_like
-\s*10.16.93.178
+--- response_body_like
+10.16.93.17
