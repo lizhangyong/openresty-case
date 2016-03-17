@@ -3,6 +3,7 @@ use Test::Nginx::Socket::Lua;
 use Test::Nginx::Socket 'no_plan';
 
 $ENV{TEST_NGINX_REDIS_PORT} ||= 6379;
+$ENV{TEST_NGINX_PORT} ||= 8080;
 
 run_tests();
 
@@ -16,7 +17,7 @@ __DATA__
             local redis = require "resty.redis"
             local red = redis:new()
 
-            local ok, err = red:connect("127.0.0.1", 6379);
+            local ok, err = red:connect("127.0.0.1", $TEST_NGINX_REDIS_PORT);
             if not ok then
                 ngx.say("failed to connect: ", err)
                 return
@@ -31,7 +32,7 @@ __DATA__
             ngx.sleep(0.1)
             red:close()
         ';
-        proxy_pass http://127.0.0.1:8080;
+        proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
     }
 
 --- request
