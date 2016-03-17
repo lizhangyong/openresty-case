@@ -6,27 +6,44 @@ run_tests();
 
 __DATA__
 
-=== TEST 1: 无效的mid参数 
---- config
-    location /unit_test {
-        access_by_lua_file ../../lua/access_check.lua;
-        content_by_lua '
-          ngx.say("<p>testcase1 ok</p>")
-        ';
-    }
---- request
-GET /unit_test/?mid=_abc*&
---- error_code: 400
---- error_log: invalid mid:
+use Test::Nginx::Socket::Lua;
+use Test::Nginx::Socket 'no_plan';
 
-=== TEST 2: 有效参数
+$ENV{TEST_NGINX_REDIS_PORT} ||= 6379;
+
+run_tests();
+
+__DATA__
+
+=== TEST 1: 测试mid参数非法的情况
 --- config
-    location /unit_test {
-        access_by_lua_file ../../lua/access_check.lua;
-        content_by_lua '
-          ngx.say("<p>testcase2 ok</p>")
-        ';
+    location /openresty-case/some.json {
+        proxy_pass http://127.0.0.1:8080;
     }
+
 --- request
-GET /unit_test/?mid=173f6bbce467fbb20bd8a14343429d95
---- error_code: 200
+GET /openresty-case/some.json/?mid=_%$test99
+
+--- error_code: 400
+
+use Test::Nginx::Socket::Lua;
+use Test::Nginx::Socket 'no_plan';
+
+$ENV{TEST_NGINX_REDIS_PORT} ||= 6379;
+
+run_tests();
+
+__DATA__
+
+=== TEST 2: 测试mid参数非法的情况
+--- config
+    location /openresty-case/some.json {
+        proxy_pass http://127.0.0.1:8080;
+    }
+
+--- request
+GET /openresty-case/some.json/?mid=012345678901234567890123456789abc
+
+--- error_code: 400
+~                    
+
