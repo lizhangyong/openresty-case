@@ -19,15 +19,15 @@ __DATA__
 
             local ok, err = red:connect("127.0.0.1", $TEST_NGINX_REDIS_PORT);
             if not ok then
-                ngx.say("failed to connect: ", err)
+                ngx.log(ngx.ERR, "failed to connect: ", err)
                 return
             end
 
             red:set_timeout(100) -- 0.1 sec
 
-            local data, err = red:set("test1", "10.16.93.17")
+            local data, err = red:set("173f6bbce467fbb20bd8a14343429d95", "10.16.93.17")
             if not data then
-                ngx.say("failed to set: ", err)
+                ngx.log(ngx.ERR, "failed to set: ", err)
             end
             ngx.sleep(0.1)
             red:close()
@@ -36,8 +36,10 @@ __DATA__
     }
 
 --- request
-GET /openresty-case/some.json/?mid=test1
+GET /openresty-case/some.json/?mid=173f6bbce467fbb20bd8a14343429d95
 
 --- error_code: 200
+--- no_error_log
+[error]
 --- response_body_like
 10.16.93.17
