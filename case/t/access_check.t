@@ -30,5 +30,3 @@ GET /openresty-case/some.json/?mid=_%$test99
 GET /openresty-case/some.json/?mid=012345678901234567890123456789abc
 
 --- error_code: 400
-~                    
-
