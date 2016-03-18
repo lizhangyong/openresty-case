@@ -1,36 +1,34 @@
 
 use Test::Nginx::Socket::Lua;
 use Test::Nginx::Socket 'no_plan';
+use Cwd qw(cwd);
 
 $ENV{TEST_NGINX_REDIS_PORT} ||= 6379;
 $ENV{TEST_NGINX_PORT} ||= 8080;
+
+my $pwd = cwd();
+
+our $HttpConfig = qq{
+    lua_package_path "$pwd/lib/?.lua;;";
+    lua_package_cpath "/usr/local/openresty/lualib/?.so;/usr/local/openresty/lualib/?.so;;";
+};
 
 run_tests();
 
 __DATA__
 
 === TEST 1: mid存在于redis中
+--- http_config eval: $::HttpConfig
 --- config
     location /openresty-case/some.json {
         #初始化redis
         access_by_lua '
-            local redis = require "resty.redis"
-            local red = redis:new()
-
-            local ok, err = red:connect("127.0.0.1", $TEST_NGINX_REDIS_PORT);
-            if not ok then
-                ngx.log(ngx.ERR, "failed to connect: ", err)
-                return
-            end
-
-            red:set_timeout(100) -- 0.1 sec
-
-            local data, err = red:set("173f6bbce467fbb20bd8a14343429d95", "10.16.93.17")
-            if not data then
-                ngx.log(ngx.ERR, "failed to set: ", err)
+            local redis_op = require "db_redis"
+            local res, err = redis_op:set_cache("173f6bbce467fbb20bd8a14343429d95", "10.16.93.17")
+            if not res then
+               ngx.log(ngx.ERR, "set cache failed, ", " err:", err)
             end
             ngx.sleep(0.1)
-            red:close()
         ';
         proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
     }
