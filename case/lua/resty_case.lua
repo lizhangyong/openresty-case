@@ -4,11 +4,10 @@ local cache_op   = require "lua.first_cache.first_cache"
 local db_op = require "lua.db.db"
 
 local cli_ip = ngx.var.remote_addr
---local mid = ngx.req.get_uri_args().mid
-local mid = ngx.var.arg_mid
+local quote_mid = ngx.quote_sql_str(ngx.var.arg_mid) 
 
 --从缓存中查找mid对应的ip
-local res, err = cache_op:get_cache(mid)
+local res, err = cache_op:get_cache(quote_mid)
 if err then
     ngx.log(ngx.WARN, "cache not hit for mid: ", mid, ' err:', err)
 end
@@ -23,7 +22,6 @@ if config.MYSQL_TABLE then
     tb_name = config.MYSQL_TABLE
 end
                  
-local quote_mid = ngx.quote_sql_str(mid) 
 local cmd = string.format("select ip from %s where mid = %s limit 1", tb_name, quote_mid)  
 local res, err = db_op:do_cmd(cmd)
 if not res or err then
