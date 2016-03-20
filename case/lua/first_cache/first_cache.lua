@@ -2,6 +2,7 @@
 local cache  = require "lua.first_cache.db_redis"
 
 local _M = {}
+local _M = { _VERSION = '1.0' }
 
 function _M.conn_cache(self)
     return cache:conn_cache()

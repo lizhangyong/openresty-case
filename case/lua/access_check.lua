@@ -12,3 +12,8 @@ else
     end
 end
 
+--if mid == nil or not ngx.re.match(mid, "^[0-9a-zA-Z]{0,32}$", "o") then
+--    ngx.log(ngx.INFO, "invalid mid: ", mid)
+--    ngx.exit(ngx.HTTP_BAD_REQUEST)
+--end
+
