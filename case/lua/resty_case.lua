@@ -23,8 +23,7 @@ if config.MYSQL_TABLE then
 end
                  
 local quote_mid = ngx.quote_sql_str(ngx.var.arg_mid) 
-local quote_tbname = ngx.quote_sql_str(tb_name)
-local cmd = string.format("select ip from %s where mid = %s limit 1", quote_tbname, quote_mid)
+local cmd = string.format("select ip from %s where mid = %s limit 1", tb_name, quote_mid)
 local res, err = db_op:do_cmd(cmd)
 if not res or err then
     ngx.log(ngx.ERR, err)
@@ -38,7 +37,7 @@ if type(res) == "table" and res[1] ~= nil and res[1]["ip"] ~= nil then
 else
      --如果都没找到，更新客户端的ip到mysql和redis 
     local quote_ip = ngx.quote_sql_str(cli_ip)
-    local cmd = string.format("insert into %s(mid, ip) values(%s, %s)", quote_tbname, quote_mid, quote_ip)  
+    local cmd = string.format("insert into %s(mid, ip) values(%s, %s)", tb_name, quote_mid, quote_ip)  
     db_op:do_cmd(cmd)
     cache_op:set_cache(mid, cli_ip)
     ngx.log(ngx.WARN, "no result found!")
