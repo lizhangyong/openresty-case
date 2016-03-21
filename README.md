@@ -14,6 +14,7 @@
 https://github.com/openresty/lua-resty-redis/blob/master/t/mock.t                           redis测试用例  
 https://github.com/iresty/programming-openresty-zh/blob/master/testing/preparing-tests.adoc nginx的测试  
 https://github.com/iresty/nginx-lua-module-zh-wiki  openresty中文wiki
+https://moonbingbing.gitbooks.io/openresty-best-practices/content/ngx/nginx_brief.html  最佳实践
 
 性能测试
 ========
