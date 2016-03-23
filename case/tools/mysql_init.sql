@@ -4,6 +4,6 @@ CREATE TABLE `resty_test`.`resty_case` (
 	`mid` varchar(32) NOT NULL,
 	`ip` varchar(32) NOT NULL,
 	PRIMARY KEY (`id`),
-	UNIQUE `mid_index` USING HASH (`mid`) comment ''
-) COMMENT='resty test table';
+	UNIQUE `mid_index` USING BTREE (`mid`) comment ''
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
