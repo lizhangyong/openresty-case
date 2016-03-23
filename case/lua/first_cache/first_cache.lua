@@ -23,7 +23,7 @@ function _M.get_cache(self, key)
     val, err = ngx_cache:get(key)
     if val then
         lock:unlock()
-        return var, err
+        return val, err
     end
         
     val, err = redis_cache:get_cache(key)
