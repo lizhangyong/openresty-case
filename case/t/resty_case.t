@@ -118,10 +118,55 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
     }
 
 --- request
-GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d97
+GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d98
 
 --- error_code: 200
 --- no_error_log
 [error]
 --- response_body_like
 .+10.16.93.18$
+
+=== TEST 5: mid既不在mysql，也不在redis
+--- http_config eval: $::HttpConfig
+--- config
+    location /openresty-case/some.json {
+        #初始化redis
+        access_by_lua '
+            local cache = require "db_redis"
+            local res, err = cache:del_cache(ngx.var.arg_mid)
+            if not res then
+               ngx.log(ngx.ERR, "init redis failed, ", " err:", err)
+            end
+            local mysql_op = require "db_mysql"
+            res, err = mysql_op:do_cmd(string.format("delete from resty_case where mid = \'%s\'", ngx.var.arg_mid))
+            if err then
+               ngx.log(ngx.ERR, "init mysql failed, ", " err:", err)
+            end
+        ';
+        proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
+        #清理redis
+        log_by_lua '
+            local function check_data(premature, mid)
+                local cache = require "db_redis"
+                local res, err = cache:get_cache(mid)
+                if not res or res ~= "127.0.0.1" then
+                   ngx.log(ngx.ERR, "update cache failed, ", " err:", err)
+                end
+                cache:del_cache(mid)
+                --local mysql_op = require "db_mysql"
+            end
+            local ok, err = ngx.timer.at(0, check_data, ngx.var.arg_mid)
+            if not ok then
+                 ngx.log(ngx.WARN, "failed to create timer: ", err)
+             end
+        ';
+    }
+
+--- request
+GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d98
+
+--- error_code: 200
+--- no_error_log
+[error]
+--- response_body
+no result found!
