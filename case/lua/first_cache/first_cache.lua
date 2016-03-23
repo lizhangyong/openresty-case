@@ -11,7 +11,7 @@ function _M.get_cache(self, key)
     end
       
     -- cache miss
-    local lock = resty_lock:new("cache_lock", {timeout=0, exptime=10})
+    local lock = resty_lock:new("cache_lock")
     local elapsed, err = lock:lock(key)
     if not elapsed then
         ngx.log(ngx.ERR, "cache_lock: failed to lock, ", err)
