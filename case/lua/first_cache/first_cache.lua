@@ -2,7 +2,9 @@ local redis_cache  = require "lua.first_cache.db_redis"
 local resty_lock = require "resty.lock"
 local ngx_cache = ngx.shared.ngx_cache
 
+
 local _M = {}
+
 
 function _M.get_cache(self, key)
     local val, err = ngx_cache:get(key)
@@ -39,15 +41,18 @@ function _M.get_cache(self, key)
 
 end
 
+
 function _M.set_cache(self, key, value)
     ngx_cache:set(key, val, 10)
     return redis_cache:set_cache(key, value)
 end
 
+
 function _M.del_cache(self, key)
     ngx_cache:delete(key)
     return redis_cache:del_cache(key)
 end
+
 
 return _M
 

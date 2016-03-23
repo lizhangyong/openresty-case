@@ -2,7 +2,6 @@
 local config = require "lua.comm.config"
 local cache_op   = require "lua.first_cache.first_cache"
 local db_op = require "lua.db.db"
-
 local cli_ip = ngx.var.remote_addr
 local mid = ngx.var.arg_mid
 

@@ -2,7 +2,9 @@
 local config = require "lua.comm.config"
 local mysql = require "resty.mysql"
 
+
 local _M = {}
+
 
 function _M.conn_db(self)
     local db, err = mysql:new()
@@ -29,10 +31,12 @@ function _M.conn_db(self)
     return db, err
 end
 
+
 function _M.set_keepalive_mod(conn)
     ngx.log(ngx.INFO, "mysql:set_keepalive")	
     return conn:set_keepalive(60*1000, 50) -- put it into the connection pool of size 50, with 10 seconds max idle time
 end
+
 
 function _M.do_cmd(self, cmd)
     ngx.log(ngx.INFO, "cmd: ", cmd)
