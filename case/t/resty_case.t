@@ -20,31 +20,31 @@ __DATA__
 
 === TEST 1: 测试mid参数非法的情况--特殊字符
 --- config
-    location /openresty-case/some.json {
+    location /openresty-case/api-test {
         proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
     }
 
 --- request
-GET /openresty-case/some.json/?mid=_%$test99
+GET /openresty-case/api-test/?mid=_%$test99
 
 --- error_code: 400
 
 
 === TEST 2: 测试mid参数非法的情况(长度不是32)
 --- config
-    location /openresty-case/some.json {
+    location /openresty-case/api-test {
         proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
     }
 
 --- request
-GET /openresty-case/some.json/?mid=012345678901234567890123456789abc
+GET /openresty-case/api-test/?mid=012345678901234567890123456789abc
 
 --- error_code: 400
 
 === TEST 3: mid存在于redis中
 --- http_config eval: $::HttpConfig
 --- config
-    location /openresty-case/some.json {
+    location /openresty-case/api-test {
         #初始化redis
         access_by_lua '
             local cache = require "db_redis"
@@ -71,7 +71,7 @@ GET /openresty-case/some.json/?mid=012345678901234567890123456789abc
     }
 
 --- request
-GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
+GET /openresty-case/api-test/?mid=273f6bbce467fbb20bd8a14343429d95
 
 --- error_code: 200
 --- no_error_log
@@ -82,7 +82,7 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
 === TEST 4: mid存在于mysql中, 不在redis中
 --- http_config eval: $::HttpConfig
 --- config
-    location /openresty-case/some.json {
+    location /openresty-case/api-test {
         #初始化redis
         access_by_lua '
             local cache = require "db_redis"
@@ -119,7 +119,7 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
     }
 
 --- request
-GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
+GET /openresty-case/api-test/?mid=273f6bbce467fbb20bd8a14343429d95
 
 --- error_code: 200
 --- no_error_log
@@ -130,7 +130,7 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
 === TEST 5: mid既不在mysql，也不在redis
 --- http_config eval: $::HttpConfig
 --- config
-    location /openresty-case/some.json {
+    location /openresty-case/api-test {
         #初始化redis
         access_by_lua '
             local cache = require "db_redis"
@@ -166,7 +166,7 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
     }
 
 --- request
-GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
+GET /openresty-case/api-test/?mid=273f6bbce467fbb20bd8a14343429d95
 
 --- error_code: 200
 --- no_error_log

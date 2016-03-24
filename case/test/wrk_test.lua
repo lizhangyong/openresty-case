@@ -11,7 +11,7 @@ math.randomseed(tostring(os.time()):reverse():sub(1, 6))
 request = function()
    wrk.host = "10.16.93.178"
    wrk.port = 8080
-   path = "/openresty-case/some.json?mid=" .. mid 
+   path = "/openresty-case/api-test?mid=" .. mid 
    mid = mids_table[math.random(1,999)]
    return wrk.format(nil, path)
 end
