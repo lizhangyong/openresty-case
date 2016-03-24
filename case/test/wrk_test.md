@@ -7,9 +7,9 @@
 ========
 使用wrk工具进行测试  
 wrk安装:
-    mac OS X系统下，建议使用brew安装，自动解决包依赖问题。  
-    brew安装： ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"  
-    wrk安装：  brew install wrk
+  mac OS X系统下，建议使用brew安装，自动解决包依赖问题。  
+  brew安装： ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"  
+  wrk安装：  brew install wrk
 
 测试命令:  
     wrk -c50 -d60 -t6 -s wrk_test.lua http://10.16.93.178:8080/  
