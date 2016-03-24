@@ -30,7 +30,7 @@ GET /openresty-case/api-test/?mid=_%$test99
 --- error_code: 400
 
 
-=== TEST 2: 测试mid参数非法的情况(长度不是32)
+=== TEST 2: 测试mid参数边界值(长度刚超过32)
 --- config
     location /openresty-case/api-test {
         proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
@@ -41,7 +41,51 @@ GET /openresty-case/api-test/?mid=012345678901234567890123456789abc
 
 --- error_code: 400
 
-=== TEST 3: mid存在于redis中
+=== TEST 3: 测试mid参数为空
+--- config
+    location /openresty-case/api-test {
+        proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
+    }
+
+--- request
+GET /openresty-case/api-test/?mid=
+
+--- error_code: 400
+
+=== TEST 4: 测试mid不存在
+--- config
+    location /openresty-case/api-test {
+        proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
+    }
+
+--- request
+GET /openresty-case/api-test/?some=123
+
+--- error_code: 400
+
+=== TEST 5: 测试有多余的参数
+--- config
+    location /openresty-case/api-test {
+        proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
+    }
+
+--- request
+GET /openresty-case/api-test/?mid=273f6bbce467fbb20bd8a14343429d95&some=123
+
+--- error_code: 200
+
+=== TEST 6: 测试有多余的参数
+--- config
+    location /openresty-case/api-test {
+        proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
+    }
+
+--- request
+GET /openresty-case/api-test/?mid=273f6bbce467fbb20bd8a14343429d95&some=123
+
+--- error_code: 200
+
+=== TEST 7: mid存在于redis中
 --- http_config eval: $::HttpConfig
 --- config
     location /openresty-case/api-test {
@@ -79,7 +123,7 @@ GET /openresty-case/api-test/?mid=273f6bbce467fbb20bd8a14343429d95
 --- response_body_like
 .+10.16.93.16$
 
-=== TEST 4: mid存在于mysql中, 不在redis中
+=== TEST 8: mid存在于mysql中, 不在redis中
 --- http_config eval: $::HttpConfig
 --- config
     location /openresty-case/api-test {
@@ -127,7 +171,7 @@ GET /openresty-case/api-test/?mid=273f6bbce467fbb20bd8a14343429d95
 --- response_body_like
 .+10.16.93.18$
 
-=== TEST 5: mid既不在mysql，也不在redis
+=== TEST 9: mid既不在mysql，也不在redis
 --- http_config eval: $::HttpConfig
 --- config
     location /openresty-case/api-test {
