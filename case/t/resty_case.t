@@ -107,8 +107,8 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
                    ngx.log(ngx.ERR, "update cache failed, ", " err:", err)
                 end
                 cache:del_cache(mid)
-                --local mysql_op = require "db_mysql"
-                --mysql_op:do_cmd(string.format("delete from resty_case where mid = \'%s\'", ngx.quote_sql_str(ngx.var.arg_mid)))
+                local mysql_op = require "db_mysql"
+                mysql_op:do_cmd(string.format("delete from resty_case where mid = \'%s\'", mid))
             end
             local ok, err = ngx.timer.at(0, check_data, ngx.var.arg_mid)
             if not ok then
@@ -152,7 +152,7 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d98
                 if not res or res ~= "127.0.0.1" then
                    ngx.log(ngx.ERR, "update cache failed, ", " err:", err)
                 end
-                cache:del_cache(mid)
+                --cache:del_cache(mid)
                 --local mysql_op = require "db_mysql"
             end
             local ok, err = ngx.timer.at(0, check_data, ngx.var.arg_mid)
