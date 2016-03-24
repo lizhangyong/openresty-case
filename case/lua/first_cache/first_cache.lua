@@ -35,7 +35,7 @@ function _M.get_cache(self, key)
     end 
 
     -- update the shm cache with the newly fetched value
-    ngx_cache:set(key, val, 10)
+    ngx_cache:set(key, val, 1)
     lock:unlock()
     return val, err
 
@@ -43,7 +43,7 @@ end
 
 
 function _M.set_cache(self, key, value)
-    ngx_cache:set(key, val, 10)
+    ngx_cache:set(key, val, 1)
     return redis_cache:set_cache(key, value)
 end
 
