@@ -5,6 +5,7 @@ use Cwd qw(cwd);
 
 $ENV{TEST_NGINX_REDIS_PORT} ||= 6379;
 $ENV{TEST_NGINX_PORT} ||= 8080;
+$ENV{TEST_NGINX_NO_SHUFFLE} ||= 1;
 
 my $pwd = cwd();
 
@@ -13,7 +14,6 @@ our $HttpConfig = qq{
     lua_package_cpath "/usr/local/openresty/lualib/?.so;/usr/local/openresty/lualib/?.so;;";
 };
 
-no_shuffle();
 run_tests();
 
 __DATA__
@@ -96,6 +96,7 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
             if err then
                ngx.log(ngx.ERR, "init mysql failed, ", " err:", err)
             end
+            ngx.sleep(1)
         ';
         proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
         #清理redis
@@ -118,7 +119,7 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
     }
 
 --- request
-GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d98
+GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
 
 --- error_code: 200
 --- no_error_log
@@ -142,6 +143,7 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d98
             if err then
                ngx.log(ngx.ERR, "init mysql failed, ", " err:", err)
             end
+            ngx.sleep(1)
         ';
         proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
         #清理redis
@@ -152,8 +154,9 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d98
                 if not res or res ~= "127.0.0.1" then
                    ngx.log(ngx.ERR, "update cache failed, ", " err:", err)
                 end
-                --cache:del_cache(mid)
-                --local mysql_op = require "db_mysql"
+                cache:del_cache(mid)
+                local mysql_op = require "db_mysql"
+                mysql_op:do_cmd(string.format("delete from resty_case where mid = \'%s\'", mid))
             end
             local ok, err = ngx.timer.at(0, check_data, ngx.var.arg_mid)
             if not ok then
@@ -163,7 +166,7 @@ GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d98
     }
 
 --- request
-GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d98
+GET /openresty-case/some.json/?mid=273f6bbce467fbb20bd8a14343429d95
 
 --- error_code: 200
 --- no_error_log
