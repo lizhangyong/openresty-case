@@ -14,6 +14,7 @@ our $HttpConfig = qq{
     lua_package_cpath "/usr/local/openresty/lualib/?.so;/usr/local/openresty/lualib/?.so;;";
 };
 
+no_shuffle();
 run_tests();
 
 __DATA__
@@ -96,6 +97,7 @@ GET /openresty-case/api-test/?mid=273f6bbce467fbb20bd8a14343429d95&some=123
             if not res then
                ngx.log(ngx.ERR, "set cache failed, ", " err:", err)
             end
+            ngx.sleep(1)
         ';
         proxy_pass http://127.0.0.1:$TEST_NGINX_PORT;
         #清理redis
