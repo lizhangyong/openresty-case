@@ -20,7 +20,7 @@ if res then
 end
 
 if err then
-    ngx.log(ngx.INFO, "query db failed: ", mid, ' err:', err)
+    ngx.log(ngx.ERR, "query db failed: ", mid, ' err:', err)
     ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
 end
 
