@@ -1,9 +1,9 @@
-local common = require "lua.comm.common"
+local logic_func = require "lua.comm.logic_func"
 
 local mid = ngx.var.arg_mid
 
 --get ip from cache
-local res, err = common.get_ip_from_cache(mid)
+local res, err = logic_func.get_ip_from_cache(mid)
 if res then
     return ngx.say("result is: ", res)
 end
@@ -13,9 +13,9 @@ if err then
 end
 
 --get ip from db
-local res, err = common.get_ip_from_db(mid)
+local res, err = logic_func.get_ip_from_db(mid)
 if res then
-    common.update_ip_to_cache(mid, res)
+    logic_func.update_ip_to_cache(mid, res)
     return ngx.say("result is: ", res)
 end
 
@@ -26,7 +26,7 @@ end
 
 
 --new mid, update cache and db
-common.update_ip_to_cache(mid, ngx.var.remote_addr)
-common.update_ip_to_db(mid, ngx.var.remote_addr)
+logic_func.update_ip_to_cache(mid, ngx.var.remote_addr)
+logic_func.update_ip_to_db(mid, ngx.var.remote_addr)
 
 return ngx.say("no result found!")
